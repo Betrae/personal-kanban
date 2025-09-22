@@ -9,27 +9,15 @@
         class="card w-80 bg-base-100 shadow-xl flex-shrink- relative"
       >
 
-      <ListBoard
+      <list-board
         :column="column"
-        @delete-column="deleteColumn(index)" />
-        <div class="card-body">
-
-          <!-- Task cards -->
-          <div class="space-y-2 mb-2">
-            <div
-              v-for="(task, taskIndex) in column.tasks"
-              :key="taskIndex"
-              class="card p-3 bg-primary text-primary-content shadow flex justify-between items-center"
-            >
-              <span>{{ task.title }}</span>
-              <button class="btn btn-xs btn-circle btn-outline" @click="removeTask(index, taskIndex)">×</button>
-            </div>
-          </div>
-
-          <!-- Button to add a task -->
-          <button class="btn btn-sm btn-outline w-full" @click="addTask(index)">
-            + Add Card
-          </button>
+        @delete-column="deleteColumn(index)"
+      />
+        <div class="card-body p-0">
+          <list-card
+            :tasks="column.tasks"
+            @add-task="task => column.tasks.push(task)"
+          />
         </div>
       </div>
     </div>
@@ -44,11 +32,16 @@
 
 <script>
 import ListBoard from '@/components/layouts/ListBoard.vue'
+import ListCard from '@/components/layouts/ListCard.vue'
+
 export default {
   name: "kan-ban",
+
   components: {
-    ListBoard
+    ListBoard,
+    ListCard
   },
+
   data() {
     return {
       columns: [],
@@ -58,19 +51,26 @@ export default {
       }
     }
   },
+
   methods: {
     addColumn() {
-      this.columns.push({ ...this.columnInfo })
+      this.columns.push({
+        ...this.columnInfo,
+        tasks: []
+      })
     },
+
     deleteColumn (index) {
       this.columns.splice(index, 1)
     },
+
     addTask(columnIndex) {
       const title = prompt('Enter task title:')
       if (title) {
         this.columns[columnIndex].tasks.push({ title })
       }
     },
+
     removeTask(columnIndex, taskIndex) {
       this.columns[columnIndex].tasks.splice(taskIndex, 1)
     }
